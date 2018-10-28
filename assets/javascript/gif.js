@@ -1,9 +1,10 @@
-$(function () {
+//created function to eventually load buttons
+$(function() {
     populateButtons(searchArray, 'searchButton', '#topButtons');
     console.log("page loaded");
 })
-
-var searchArray = ['dunk', 'alleyoop', 'freethrow'];
+//array of buttons
+var searchArray = ['3pointer', 'alleyoop', 'rebound'];
 
 function populateButtons(searchArray,classToAdd,areaToAddTo) {
     $(areaToAddTo).empty();
@@ -19,13 +20,14 @@ function populateButtons(searchArray,classToAdd,areaToAddTo) {
 
 
 }
-
+//when the buoons are clicked, gather images from giphy api
 $(document).on('click', '.searchButton', function() {
     $('#searches').empty();
-    var move = $(this).data('searchArray[i]');
-    var queryURL = 'https://api.giphy.com/v1/gifs/search?q=' + move + '&api_key=LpVrOSwi9J91ZiRnd5KVdE56clEx49Cx&limit=10';
+    var type = $(this).data('type');
+    var queryURL = 'https://api.giphy.com/v1/gifs/search?q=' + type + '&api_key=LpVrOSwi9J91ZiRnd5KVdE56clEx49Cx&limit=10';
     $.ajax({ url: queryURL, method: 'GET' })
         .done(function(response) {
+ // ratings and what not for the images           
             for (var i = 0; i<response.data.length; i++) {
                 var searchDiv = $('<div class="search-item">');
                 var rating = response.data[i].rating;
@@ -45,7 +47,25 @@ $(document).on('click', '.searchButton', function() {
 
         })
 
+  //animattion for the gifs     
+
     })
+
+    $(document).on('click','.searchImage',function(){
+        var state = $(this).data('state');
+
+        if(state=='still'){
+            $(this).attr('src',$(this).data('animated'));
+            $(this).attr('data-state','animated');
+
+        } else {
+            $(this).attr('src',$(this).data('still'));
+            $(this).attr('data-state','still');
+        }
+
+
+    })
+// I was unable to get the new buttons to appear at the top
 
     $('#addSearch').on('click',function(){
         var newSearch = $('input').eq(0).val();
