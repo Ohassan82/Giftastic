@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GifTastic</title>
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.6/firebase.js"></script>
+</head>
+
+<body>
+    <div class="jumbotron text-center">
+        <div class="container">
+            <h1 class="display-4">Employee Data Management</h1>
+            <p class="lead"></p>A Comprehensive Directory of Employee Billable Hours.</p>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Employee Name</th>
+                <th scope="col">Role</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">Months Worked</th>
+                <th scope="col">Monthly rate($)</th>
+                <th scope="col">Total Billed($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Hank Hankerson</td>
+                <td>Programmer</td>
+                <td>12/11/2010</td>
+                <td>30</td>
+                <td>3000</td>
+                <td>30000</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <form>
+        <div class="form-group">
+            <label for="exampleFormControlInput1">Employee Name</label>
+            <input type="Name" class="form-control" id="name-input" placeholder="Name">
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Role</label>
+            <input type="Role" class="form-control" id="role-input" placeholder="Role">
+
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlSelect2">Start Date</label>
+            <input type="Role" class="form-control" id="date-input" placeholder="Date">
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Monthly Rate</label>
+            <input type="Role" class="form-control" id="rate-input" placeholder="Monthly Rate">
+        </div>
+        <button type="submit" class="btn btn-primary" id="add-user">Submit</button>
+    </form>
+
+    <script>
+
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyDG3mYBCiUpgB_jj0X0yo_pAmo4Qz98Z7o",
+            authDomain: "osman-hassan-rules.firebaseapp.com",
+            databaseURL: "https://osman-hassan-rules.firebaseio.com",
+            projectId: "osman-hassan-rules",
+            storageBucket: "osman-hassan-rules.appspot.com",
+            messagingSenderId: "703799760993"
+        };
+        firebase.initializeApp(config);
+        // Create a variable to reference the database.
+        var database = firebase.database();
+
+        // Initial Values
+        var name = "";
+        var role = "";
+        var date = "";
+        var rate = "";
+
+
+        // Capture Button Click
+        $("#add-user").on("click", function (event) {
+            event.preventDefault();
+
+            // Grabbed values from text boxes
+            name = $("#name-input").val().trim();
+            email = $("#role-input").val().trim();
+            date = $("#date-input").val().trim();
+            rate = $("#rate-input").val().trim();
+
+            // Code for handling the push
+            database.ref("/employee").push({
+                name: name,
+                role: role,
+                date: date,
+                rate: rate,
+                dateAdded: firebase.database.ServerValue.TIMESTAMP
+            });
+            database.ref("/employee").on("child_added", function (childSnapshot) {
+
+
+            })
+            $("tbody").append("<tr><td id=name>" + childSnapshot.val().name + "</td><td id=role>"
+                + childSnapshot.val().role + "</td><td id=startDate>"
+                + childSnapshot.val().date + "</td><td id=rate>"
+                + childSnapshot.val().rate + "</td>"
+                + "</tr>"
+            );
+        }, function (errorObject) {
+      console.log("Errors handled: " + errorObject.code);
+          
+        });
+
+        database.ref("/employee").orderByChild("dateAdded").limitToLast(1).on("child_added", function (snapshot) {
+      // Change the HTML to reflect
+      $("#name").text(snapshot.val().name);
+      $("#role").text(snapshot.val().role);
+      $("#dateStarted").text(snapshot.val().date);
+      $("#rate").text(snapshot.val().rate);
+    });
+
+
+
+    </script>
+
+
+
+</body>
+
+</html>
